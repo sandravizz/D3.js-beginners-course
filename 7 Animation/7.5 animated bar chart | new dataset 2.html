@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">BAR CHART | UPDATE</p>
+<div id="link">by
+<a href="https://slides.com/sandraviz">SANDRA</a> | <a href="https://data.oecd.org/agrland/nutrient-balance.htm">DATA</a></div>
+
+<!--------------------------------------->
+<!-- Buttons -->
+<!--------------------------------------->
+
+<button id="start" style="position: absolute; margin-left:25px; margin-top:60px;">START</button>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Button stylings */
+/*--------------------------------------*/
+
+#start {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-size:12px;
+  color:WHITE;
+  border:0;
+  line-height:1;
+  text-align:center;
+  background-color:#011227;
+}
+
+#start:hover {
+  color:#f5fa91;
+  background-color:NONE;
+}
+
+/*--------------------------------------*/
+/* Axes stylings */
+/*--------------------------------------*/
+
+.y-axis text, .x-axis text {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:100;
+  font-size:9px;
+  opacity:1;
+  fill:white;
+}
+
+.y-axis path, .x-axis path {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+}
+
+.y-axis line, .x-axis line {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+  stroke-dasharray:2;
+}
+
+/*--------------------------------------*/
+/* Chart stylings */
+/*--------------------------------------*/
+
+.bar {
+  fill-opacity:0.8;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:50}
+    w = 800 - m.left - m.right,
+    h = 600 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+    .attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Data loading
+// --------------------------------------
+
+const data = d3.csv("https://gist.githubusercontent.com/sandravizz/b5562c21f4f4175b1e7864cfe924d7a5/raw/6f8d2feff718a1e04966c25aa8ad02f1d07e7d67/OECD%2520Nutrition%2520balance%2520(indicator)%2520by%2520country%25202015", d3.autoType)
+      .then(function(data){ 
+
+      console.log(data);
+
+// --------------------------------------
+//  Sorting
+// --------------------------------------
+
+data.sort((a, b) => a.Value - b.Value);
+
+// --------------------------------------
+//  Scales
+// --------------------------------------
+
+var maxh = d3.max(data, d => Math.abs(+d.Value));
+var minh = d3.min(data, d => Math.abs(+d.Value));
+
+var c = d3.scaleLinear()
+    .domain([maxh, minh])
+    .range(["#85f6fa", "#8ff798"]);
+
+var c2 = d3.scaleLinear()
+    .domain([maxh, minh])
+    .range(["white"]);
+
+var x = d3.scaleBand()
+		.domain(data.map(d => d.LOCATION))
+		.rangeRound([0, w])
+		.paddingInner(0.03);
+
+var y = d3.scaleLinear()
+		.domain([maxh, -10])
+		.rangeRound([0, h]);
+
+// --------------------------------------
+//  Axes
+// --------------------------------------
+
+svg.append("g")
+   .attr("class", "x-axis")
+   .attr("transform", `translate(0, ${h/1.02})`)
+   .call(d3.axisBottom(x))
+   .selectAll("text")
+   .attr("y", 6)
+   .attr("x", 0)
+   .attr("transform", "rotate(35)")
+   .style("text-anchor", "start");
+
+svg.append("g")
+   .attr("class", "y-axis")
+   .call(d3.axisLeft(y)
+					 .ticks(6)
+           .tickPadding(-5));
+
+// --------------------------------------
+//  Data drawing
+// --------------------------------------
+
+svg.selectAll('rect')
+   .data(data)
+	 .join('rect')
+	 .attr('class','bar')
+	 .attr("x", d => x(d.LOCATION))
+	 .attr("width", x.bandwidth())
+   .attr("y", d => {if(+d.Value < 0) {return h/1.175;}
+		else{return y(+d.Value);}})
+	 .attr("height", d => h/1.175 - y(Math.abs(+d.Value)))
+   .attr("fill", d => {if(+d.Value >= 0) {return c(d.Value);}
+		else{return c2(d.Value);}})
+});
+
+// --------------------------------------
+//  Click
+// --------------------------------------
+
+d3.select("#start")
+  .on("click", function() {
+
+// --------------------------------------
+//  Data loading
+// --------------------------------------
+
+const data = d3.csv("https://gist.githubusercontent.com/sandravizz/dc8b059ba4415292040d8d3be3fecf19/raw/075f7401e72130be5cf6a958a91a86fe676f614d/OECD%2520PHOSPHORUS%2520Tonne%2520(indicator)%2520by%2520country%25202015", d3.autoType)
+      .then(function(data){ 
+
+      console.log(data);
+
+// --------------------------------------
+//  Sorting
+// --------------------------------------
+
+  data.sort((a, b) => {return a.Value - b.Value;});
+
+// --------------------------------------
+//  Scales
+// --------------------------------------
+
+  var c = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.Value))
+      .range(["#8ff798", "#85f6fa"]);
+
+  var x = d3.scaleBand()
+  		.domain(data.map(d => d.LOCATION))
+  		.rangeRound([0, w])
+  		.paddingInner(0.05);
+
+  var y = d3.scaleLinear()
+  		.domain(d3.extent(data, d => d.Value))
+  		.range([h,0]);
+
+// --------------------------------------
+//  Axes
+// --------------------------------------
+
+  svg.select(".x-axis")
+  	 .transition()
+  	 .duration(2000)
+  	 .call(d3.axisBottom(x)
+  					 .ticks(5))
+  	 .attr("transform", "translate(0, "+h+")");
+
+  svg.select(".y-axis")
+  	 .transition()
+  	 .duration(2000)
+  	 .call(d3.axisLeft(y)
+  					 .ticks(5)
+  					 .tickFormat(d3.format(".0s")));
+
+// --------------------------------------
+//  Data drawing
+// --------------------------------------
+
+  svg.selectAll('rect')
+     .data(data)
+  	 .transition()
+     .duration(5000)
+  	 .attr("y", d => y(d.Value))
+  	 .attr("height", d => h - y(d.Value))
+     .attr("fill", d => c(d.Value));
+})
+});
+
+</script>
+</body>
+</html>

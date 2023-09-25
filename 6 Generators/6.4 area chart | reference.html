@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<p id="h1">AREA | REFERENCE</p>
+<div id="link"> by
+<a href="https://slides.com/sandraviz">SANDRA</a> | <a href="https://data.oecd.org/forest/forest-resources.htm">DATA</a></div>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Axes stylings */
+/*--------------------------------------*/
+
+.y-axis text, .x-axis text {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:400;
+  font-size:10px;
+  opacity:1;
+  fill:white;
+}
+
+.y-axis path, .x-axis path {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+}
+
+.y-axis line, .x-axis line {
+  fill:none;
+  stroke-width:0.1;
+  stroke-opacity:0.5;
+  stroke:white;
+  stroke-dasharray:2;
+}
+
+/*--------------------------------------*/
+/* Chart stylings */
+/*--------------------------------------*/
+
+.area {
+ stroke-width:1.5px;
+ stroke:#8ff798;
+ fill-opacity:0.2;
+ fill:#8ff798;
+}
+
+.danger {
+ stroke-width:1.5px;
+ stroke:#85f6fa;
+ fill-opacity:0.2;
+ fill:#85f6fa;
+}
+
+.Label {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:400;
+  font-size:12px;
+  opacity:1;
+  fill:#8ff798;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:40}
+    w = 700 - m.left - m.right,
+    h = 700 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+    .attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Format
+// --------------------------------------
+
+const parseDate = d3.timeParse("%Y");
+const formatNumber = d3.format(".2s");
+
+// --------------------------------------
+//  Data loading
+// --------------------------------------
+
+const data = d3.csv("https://gist.githubusercontent.com/sandravizz/d4c0681731f16e14e7ed10fc10507f03/raw/904f049daa0d5060926f746a1b1a95b019895006/OECD%2520Air%2520pollution%2520EU28%252090-17", d3.autoType)
+      .then(function(data){ 
+
+      console.log(data);
+
+// --------------------------------------
+//  Scales
+// --------------------------------------
+
+const x = d3.scaleLinear()
+  	  .domain(d3.extent(data, d => d.TIME))
+  	  .rangeRound([0, w]);
+
+const y = d3.scaleLinear()
+  	  .domain([0, d3.max(data, d => d.Value)])
+  		.range([h, 0]);
+
+// --------------------------------------
+//  Axes
+// --------------------------------------
+
+  svg.append("g")
+      .attr("class", "x-axis")
+  	  .attr("transform", `translate(0, ${h})`)
+      .call(d3.axisBottom(x)
+      		    .ticks(3)
+   					  .tickSize(-h)
+              .tickPadding(20)
+              .tickFormat(formatNumber))
+     .selectAll("text")
+     .attr("y", 6)
+     .attr("x", 0)
+     .style("text-anchor", "start");
+
+  svg.append("g")
+      .attr("class", "y-axis")
+      .attr("transform", `translate(0, ${0})`)
+      .call(d3.axisLeft(y)
+      		    .ticks(5)
+              .tickSize(-w)
+  				  	.tickPadding(10));
+
+// --------------------------------------
+//  Generators
+// --------------------------------------
+
+const area = d3.area()
+  		.defined(d => d.Value >= d3.min(data, d => d.Value))
+  		.x(d => x(d.TIME))
+  		.y1(() => y(d3.min(data, d => d.Value)))
+  		.y0(h);
+
+const dangerArea = d3.area()
+      .x(d => x(d.TIME))
+      .y0(() => y(d3.min(data, d => d.Value)))
+      .y1(d => y(d.Value));
+
+// --------------------------------------
+//  Data drawing
+// --------------------------------------
+
+  svg.append("path")
+  	  .datum(data)
+  	  .attr("class", "area")
+  	  .attr("d", area);
+
+  svg.append("path")
+      .datum(data)
+      .attr("class", "danger area")
+      .attr("d", dangerArea);
+
+// --------------------------------------
+//  Data label
+// --------------------------------------
+
+  svg.append("text")
+  	  .attr("class", "Label")
+  	  .attr("x", 10)
+  	  .attr("y", y(d3.min(data, d => d.Value) - 0.5))
+  	  .text("REFERENCE");
+
+});
+
+</script>
+</body>
+</html>

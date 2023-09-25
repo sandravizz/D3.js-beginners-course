@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">LINE CHART | COLOUR</p>
+<div id="link"> by
+<a href="https://slides.com/sandraviz">SANDRA</a> | <a href="https://data.oecd.org/migration/permanent-immigrant-inflows.htm#indicator-chart">DATA </a></div>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Axes stylings */
+/*--------------------------------------*/
+
+.x-axis text {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:400;
+  font-size:10px;
+  opacity:0.5;
+  fill:white;
+}
+
+.y-axis text {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:400;
+  font-size:9px;
+  opacity:0.5;
+  fill:white;
+}
+
+.y-axis path, .x-axis path {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+}
+
+.y-axis line, .x-axis line {
+  fill:none;
+  stroke-width:0.5;
+  stroke-opacity:0.5;
+  stroke:white;
+  stroke-dasharray:2;
+}
+
+/*--------------------------------------*/
+/* Chart stylings */
+/*--------------------------------------*/
+
+.line {
+   fill:none;
+   stroke-width:0.5px;
+   opacity:0.8;
+}
+
+.line2 {
+   fill:none;
+   stroke-width:3px;
+}
+
+.end-label1, .end-label2, .end-label3 {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-size: 10px;
+  font-variant: small-caps slashed-zero;
+}
+
+.end-label1 {
+  fill:#85f6fa;
+}
+
+.end-label2 {
+  fill:#FC77AD;
+}
+
+.end-label3 {
+  fill:#8ff798;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:40}
+    w = 700 - m.left - m.right,
+    h = 700 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+    .attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Format
+// --------------------------------------
+
+var parseDate = d3.timeParse("%Y");
+var formatDate = d3.timeFormat("%Y");
+var formatNumber = d3.format(".2s");
+
+// --------------------------------------
+//  Data loading
+// --------------------------------------
+
+const data = d3.csv("https://gist.githubusercontent.com/sandravizz/6e808e140b348d0a616beb01cf1a09c1/raw/19f616d6fe3f495a0616bba0d1fd4fc0cc1c3809/OECD:%2520Immigration%2520flow%2520by%2520country%2520over%2520time", d3.autoType)
+      .then(function(data){ 
+
+      console.log(data);
+
+// --------------------------------------
+//  Grouping
+// --------------------------------------
+
+  var location = d3.nest()
+  	  .key(d => d.LOCATION)
+      .entries(data);
+
+  allKeys = location.map(d => d.key)
+
+  location.forEach(s => {s.values.forEach(d => {d.Value = +d.Value;
+                                               d.TIME = parseDate(d.TIME);
+                                               });
+                         s.maxValue = d3.max(s.values, d => d.Value);
+                         s.sumValue = d3.sum(s.values, d => d.Value);
+                        });
+
+// --------------------------------------
+//  Scales
+// --------------------------------------
+
+  var x = d3.scaleTime()
+      .domain(d3.extent(data, d => d.TIME))
+      .range([0, w]);
+
+  var y = d3.scaleLinear()
+      .domain([0, d3.max(location.map(d => d.maxValue))])
+      .range([h, 0]);
+
+  var c = d3.scaleOrdinal()
+      .range(["#FC77AD", "#8ff798", "#85f6fa"]);
+
+// --------------------------------------
+//  Generators
+// --------------------------------------
+
+  var line = d3.line()
+      .x(d => x(d.TIME))
+      .y(d => y(d.Value));
+
+// --------------------------------------
+//  Axes
+// --------------------------------------
+
+  svg.append("g")
+      .attr("class", "x-axis")
+      .attr("transform", `translate(0, ${h})`)
+      .call(d3.axisBottom(x)
+    		      .ticks(10)
+              .tickPadding(10)
+              .tickSize(0));
+
+  svg.append("g")
+      .attr("class", "y-axis")
+      .call(d3.axisLeft(y)
+    		      .tickValues([1200000, 1100000, 1000000,500000, 700000])
+              .tickSize(-w)
+  				    .tickPadding(10)
+              .tickFormat(formatNumber));
+
+// --------------------------------------
+//  Filter
+// --------------------------------------
+
+  var f1 = location.filter(d => d.key === "USA");
+  var f2 = location.filter(d => d.key === "DEU");
+  var f3 = location.filter(d => d.key === "GBR");
+  var f4 = location.filter(d => d.key === "USA" || d.key === "DEU" || d.key === "GBR");
+
+// --------------------------------------
+//  Data drawing 
+// --------------------------------------
+
+  svg.selectAll(".line")
+      .data(f4)
+      .join("path")
+      .attr("class", "line2")
+      .attr("d",d => line(d.values))
+      .style("stroke", d => c(d.key));
+
+  svg.selectAll(".line")
+      .data(location)
+      .join("path")
+      .attr("class", "line")
+      .attr("d",d => line(d.values))
+      .style("stroke", "#f5fa91");
+
+// --------------------------------------
+//  Drawing the labels 
+// --------------------------------------
+
+  svg.append("g")
+      .selectAll("text")
+      .data(f1)
+      .join("text")
+      .attr("class", "end-label1")
+      .attr("dx", w + 5)
+      .attr("dy", 39)
+      .text(d => f1[0].key);
+
+  svg.append("g")
+      .selectAll("text")
+      .data(f2)
+      .join("text")
+      .attr("class", "end-label2")
+      .attr("dx", w + 5)
+      .attr("dy", 98)
+      .text(d => f2[0].key);
+
+  svg.append("g")
+        .selectAll("text")
+        .data(f3)
+        .join("text")
+        .attr("class", "end-label3")
+        .attr("dx", w + 5)
+        .attr("dy", 400)
+        .text(d => f3[0].key);
+});
+
+</script>
+</body>
+</html>

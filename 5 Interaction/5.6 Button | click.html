@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>button | click</title>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">BUTTON | CLICK</p>
+<div id="link">by
+<a href="https://slides.com/sandraviz">SANDRA</a></div>
+
+<!-- Creating the buttons -->
+<button id="start" style="position: absolute; margin-left:55px; margin-top: 120px;">START</button>
+<button id="reset" style="position: absolute; margin-left:130px; margin-top: 120px;">RESET</button>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Button stylings */
+/*--------------------------------------*/
+
+#start, #reset {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-size:14px;
+  color:#8ff798;
+  border:0;
+  text-align:center;
+  background-color:#011227;
+}
+
+#start:hover, #reset:hover {
+  color:white;
+  background-color:#011227;
+  border:0;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:40}
+    w = 800 - m.left - m.right,
+    h = 600 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+		.attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Rect
+// --------------------------------------
+
+var rect=svg.append("rect")
+		        .attr("x", 0)
+		        .attr("y", 50)
+		        .attr("width", 350)
+		        .attr("height", 350)
+            .attr("fill", "#85f6fa");
+
+// --------------------------------------
+//  Interactivity click
+// --------------------------------------
+
+d3.select("#start")
+  .on("click", function() {
+
+  rect
+    .attr("x", 0)
+    .attr("y", 50)
+    .attr("width", 200)
+    .attr("height", 200)
+    .attr("fill", "white")
+
+});
+
+
+d3.select("#reset")
+  .on("click", function() {
+
+  rect
+    .attr("x", 0)
+    .attr("y", 50)
+    .attr("width", 300)
+    .attr("height", 300)
+    .attr("fill", "#85f6fa");
+
+});
+
+</script>
+</body>
+</html>

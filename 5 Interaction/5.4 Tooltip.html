@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>d3.tip | tooltip</title>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://unpkg.com/d3-v6-tip@1.0.6/build/d3-v6-tip.js"></script>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">D3.TIP | TOOLTIP</p>
+<div id="link">by
+<a href="https://slides.com/sandraviz">SANDRA</a></div>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Chart stylings */
+/*--------------------------------------*/
+
+circle {
+	fill:#85f6fa;
+  opacity:0.5;
+}
+
+/*--------------------------------------*/
+/* Tooltip */
+/*--------------------------------------*/
+
+.d3-tip {
+  font-weight:400;
+  font-size:20px;
+  line-height: 1.4;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  pointer-events: none !important;
+  color:#f5fa91;
+  font-family: 'Montserrat Alternates', sans-serif;
+  border-width: 2px;
+  border-radius: 20px;
+  stroke: white;
+  max-width:350px; 
+  display: inline-block;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:40}
+    w = 700 - m.left - m.right,
+    h = 700 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+		.attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Tooltip
+// --------------------------------------
+
+const tooltip = d3.tip()
+    .attr("class", "d3-tip")
+    .html(
+      (event, d) => `<div> Tooltip </div>`
+    );
+
+svg.call(tooltip); 
+
+// --------------------------------------
+//  Data drawing
+// --------------------------------------
+
+d3.select("svg")
+  .append("circle")
+  .attr("class", "circle")
+  .attr("r", 200)
+  .attr("cx", 300)
+  .attr("cy", 300)
+
+// --------------------------------------
+//  Interactivity tooltip
+// --------------------------------------
+
+  .on("mouseover", tooltip.show)
+  .on("mousemove", tooltip.show)
+  .on("mouseout", tooltip.hide);
+
+</script>
+</body>
+</html>

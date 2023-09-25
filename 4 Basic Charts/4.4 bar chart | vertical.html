@@ -1,0 +1,154 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>bar chart | vertical</title>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js" ></script>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">BAR CHART | VERTICAL</p>
+<div id="link">by
+<a href="https://slides.com/sandraviz">SANDRA</a></div>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Chart stylings */
+/*--------------------------------------*/
+
+.bars {
+  stroke-width:0px;
+  fill:#85f6fa;
+  fill-opacity:1;
+}
+
+text {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-size: 10px;
+  text-align: left;
+  fill:black;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:40}
+    w = 700 - m.left - m.right,
+    h = 700 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+		.attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Data loading
+// -------------------------------------- 
+
+const data = d3.csv("https://gist.githubusercontent.com/sandravizz/c845615e98365bca5a29015eaa0af93e/raw/da63477080bb5a36223ec3f905d504d0a7a37dd8/OECD%2520Hospital%2520stay%25202017%2520by%2520country", d3.autoType)
+      .then(function(data){ 
+
+      console.log(data);
+
+// --------------------------------------
+//  Sorting
+// --------------------------------------
+
+  data.sort((b, a) => a.Value - b.Value);
+
+// --------------------------------------
+//  Scales
+// --------------------------------------
+
+  var x = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.Value)])
+      .range([20, 600])
+
+// --------------------------------------
+//  Data binding
+// --------------------------------------
+
+  var bar = svg.selectAll("g")
+      .data(data)
+      .join("g")
+      .attr("transform",(d, i) => `translate(0, ${i * 20})`);
+
+// --------------------------------------
+//  Data drawing
+// --------------------------------------
+
+  bar.append("rect")
+      .attr("width", d => x(d.Value))
+      .attr("height", 19)
+      .attr("class", "bars");
+
+// --------------------------------------
+//  Label drawing
+// --------------------------------------
+
+  bar.append("text")
+      .attr("x", 12)
+      .attr("y", 10)
+      .attr("dy", ".34em")
+      .text(d => d.LOCATION);
+});
+
+</script>
+</body>
+</html>

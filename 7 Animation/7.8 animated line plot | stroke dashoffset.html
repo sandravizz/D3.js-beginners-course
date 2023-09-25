@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">LINE CHART | ANIMATION </p>
+<div id="link">by
+<a href="https://slides.com/sandraviz">SANDRA</a></div>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Axes stylings */
+/*--------------------------------------*/
+
+.y-axis text, .x-axis text {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:100;
+  font-size:9px;
+  opacity:1;
+  fill:white;
+}
+
+.x-axis path, .y-axis path {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+}
+
+.y-axis line, .x-axis line {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+  stroke-dasharray:2;
+}
+
+/*--------------------------------------*/
+/* Chart stylings */
+/*--------------------------------------*/
+
+.line {
+   fill:none;
+   stroke:white;
+   stroke-width: 1px;
+}
+
+.horizontalGrid {
+   fill:none;
+   stroke:white;
+   stroke-width:0.5px;
+   stroke-dasharray: 2;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:50}
+    w = 600 - m.left - m.right,
+    h = 600 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+    .attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Data loading
+// --------------------------------------
+
+const data = d3.tsv("https://gist.githubusercontent.com/sandravizz/1b93837c96e1476943e0994ef8f8b5ea/raw/0fda1dd83d8614d41e824ac1ef5afb6720075c38/SDI%2520Finland", d3.autotype)
+      .then(function(data){ 
+
+      console.log(data);
+
+// --------------------------------------
+//  Format
+// --------------------------------------
+
+
+
+// --------------------------------------
+//  Scales
+// --------------------------------------
+
+
+
+// --------------------------------------
+//  Generators
+// --------------------------------------
+
+
+
+// --------------------------------------
+//  Axes
+// --------------------------------------
+
+
+
+// --------------------------------------
+//  Lines
+// --------------------------------------
+
+
+
+// --------------------------------------
+//  Data drawing
+// --------------------------------------
+
+
+// --------------------------------------
+//  Animation
+// --------------------------------------
+
+
+
+});
+
+</script>
+</body>
+</html>

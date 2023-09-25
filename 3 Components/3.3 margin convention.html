@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>margin convention</title>
+
+<!--------------------------------------->
+<!-- Fonts reference-->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries-->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js" ></script>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Chart stylings */
+/*--------------------------------------*/
+
+rect {
+  fill:#28f039;
+  stroke:#8ff798;
+  stroke-width:1.5;
+  fill-opacity:0.1;
+  stroke-opacity:1;
+}
+
+text {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:12px;
+  fill:#8ff798;
+}
+
+</style>
+</head>
+
+<body>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">MARGIN CONVENTION</p>
+<div id="link">by
+<a href="https://slides.com/sandraviz">SANDRA</a></div>
+
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:40}
+    w = 700 - m.left - m.right,
+    h = 700 - m.top - m.bottom;
+
+var svg = d3.select("body")
+	  .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+		.attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Rect
+// --------------------------------------
+
+svg.append("rect")
+    .attr("width", w)
+    .attr("height", h);
+
+// --------------------------------------
+//  Text
+// --------------------------------------
+
+svg.append("text")
+    .text("CHART CONTAINER")
+    .attr("y", -8)
+	  .attr("x", 4);
+
+ </script>
+ </body>
+ </html>

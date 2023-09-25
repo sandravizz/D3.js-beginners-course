@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">TRANSITION | MULTIPLE</p>
+<div id="link">by
+<a href="https://slides.com/sandraviz">SANDRA</a></div>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Chart stylings */
+/*--------------------------------------*/
+
+circle{
+  opacity:0.6;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:50}
+    w = 600 - m.left - m.right,
+    h = 600 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+    .attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Dataset
+// --------------------------------------
+
+var data = [5, 8.5, 8, 7, 6, 6.5, 9, 2];
+
+// --------------------------------------
+//  Data drawing
+// --------------------------------------
+
+svg.selectAll("circle")
+   .data(data)
+   .join("circle")
+   .style("fill", "#85f6fa")
+   .attr("cx", (d, i) => i*20)
+   .attr("r", d => d)
+   .attr("cy", "10%")
+
+// --------------------------------------
+//  Animation
+// --------------------------------------
+
+   .transition()
+   .duration(2000)
+   .style("fill", "#8ff798")
+   .attr("cx", (d, i) => i*40)
+   .attr("r", d => d*3.5)
+   .attr("cy", "30%");
+
+d3.selectAll("circle")
+  .transition()
+  .delay(2000)
+  .duration(4000)
+  .attr("cx", (d, i) => i*60)
+  .attr("r", d => d)
+  .attr("cy", "50%")
+  .style("fill", "#f5fa91")
+  .transition()
+  .duration(4000)
+  .attr("cy", "20%")
+  .transition()
+  .duration(4000)
+  .attr("r", d => d*5)
+  .attr("cy", "30%");
+
+</script>
+</body>
+</html>

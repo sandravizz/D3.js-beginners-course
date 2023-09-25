@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>bar chart | mouse events</title>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js" ></script>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">BAR CHART | MOUSE EVENTS </p>
+<div id="link">by
+<a href="https://slides.com/sandraviz">SANDRA</a></div>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:80, right:50, bottom:50, left:40}
+    w = 800 - m.left - m.right,
+    h = 600 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+		.attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Data loading
+// --------------------------------------
+
+const data = d3.csv("https://gist.githubusercontent.com/sandravizz/22191c2a376a41df870994faf6eab6eb/raw/dfcf4a93505254832e37f66e3328ff6e740908b0/OECD%2520Threatened%2520species:%2520plants%2520by%2520country%25202015", d3.autoType)
+      .then(function(data){ 
+
+      console.log(data);
+
+// --------------------------------------
+//  Sorting
+// --------------------------------------
+
+  data.sort((b, a) => a.Value - b.Value);
+
+// --------------------------------------
+//  Scales
+// --------------------------------------
+
+  var y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => d.Value)])
+      .range([h, 0]);
+
+  var x = d3.scaleBand()
+      .domain(d3.range(data.length))
+      .rangeRound([0, w])
+      .paddingInner(0.05);
+
+// --------------------------------------
+//  Data drawing
+// --------------------------------------
+
+  svg.selectAll('rect')
+      .data(data)
+      .join('rect')
+      .attr("x",(d, i) => x(i))
+      .attr("width", x.bandwidth())
+      .attr("y",d => y(d.Value))
+      .attr("height",d => h - y(d.Value))
+      .attr("fill", "#8ff798")
+
+// --------------------------------------
+//  Interactivity hover style
+// --------------------------------------
+
+      .on("mouseover", function () {
+ 					 d3.select(this)
+ 						 .attr("fill", "#FC77AD");
+ 				})
+
+			.on("mouseout", function () {
+ 					 d3.select(this)
+ 						 .attr("fill", "#85f6fa");
+
+ 				});
+
+});
+
+</script>
+</body>
+</html>

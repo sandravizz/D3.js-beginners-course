@@ -1,0 +1,195 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>scatter plot | log axis</title>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js" ></script>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">PERSONALISED AXES</p>
+<div id="link">by
+<a href="https://slides.com/sandraviz">SANDRA</a></div>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Axes stylings */
+/*--------------------------------------*/
+
+.y-axis text, .x-axis text {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:400;
+  font-size:10px;
+  opacity:1;
+  fill:white;
+}
+
+.x-axis path, .y-axis path {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+}
+
+.y-axis line {
+  fill:none;
+  stroke-width:0.1;
+  stroke-opacity:1;
+  stroke:white;
+  stroke-dasharray:2;
+}
+
+.x-axis line {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+  stroke-dasharray:2;
+}
+
+/*--------------------------------------*/
+/* Chart stylings */
+/*--------------------------------------*/
+
+circle {
+	fill:#f5fa91;
+  opacity:0.5;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:40}
+    w = 700 - m.left - m.right,
+    h = 700 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+		.attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Format
+// --------------------------------------
+
+var formatNumber = d3.format(".2s");
+
+// --------------------------------------
+//  Data loading
+// --------------------------------------
+
+const data = d3.tsv("https://gist.githubusercontent.com/sandravizz/8fb184d477565dd7e9ada471fe41db7f/raw/775829eb551019b26b16acc8c1a99243e8d1c0d2/diamonds%2520tsv", d3.autoType)
+      .then(function(data){ 
+
+      console.log(data);
+
+// --------------------------------------
+//  Scales
+// --------------------------------------
+
+  var x = d3.scaleLinear()
+      .domain(d3.extent(data, d => d.carat))
+      .range([0, w]);
+
+  var c = d3.scaleLog()
+    .domain(d3.extent(data, d => d.price))
+    .range(['#8ff798', '#85f6fa']);
+
+  var y = d3.scaleLog()
+      .domain(d3.extent(data, d => d.price))
+      .rangeRound([h, 0]);
+
+// --------------------------------------
+//  Axes
+// --------------------------------------
+
+  svg.append("g")
+    	.attr("class", "x-axis")
+    	.attr("transform", `translate(0, ${h})`)
+    	.call(d3.axisBottom(x)
+    					 .ticks(5)
+               .tickSize(-h)
+            	 .tickPadding(20));
+
+  svg.append("g")
+    	.attr("class","y-axis")
+    	.attr("transform",`translate(0,0)`)
+    	.call(d3.axisLeft(y)
+               .tickValues([300, 500, 1000, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000])
+               .tickSize(-w)
+            	 .tickPadding(20)
+               .tickFormat(formatNumber));
+
+// --------------------------------------
+//  Data drawing
+// --------------------------------------
+
+  svg.selectAll("circle")
+    	.data(data)
+    	.join("circle")
+      .style('fill', d => c(d.price))
+    	.attr("cx", d => x(d.carat))
+    	.attr("cy", d => y(d.price))
+    	.attr("r",1);
+
+});
+
+</script>
+</body>
+</html>

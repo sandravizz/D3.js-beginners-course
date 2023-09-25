@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>scatter plot | mouse events</title>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">SCATTER PLOT | MOUSE EVENTS </p>
+<div id="link">by
+<a href="https://slides.com/sandraviz">SANDRA</a></div>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Chart stylings */
+/*--------------------------------------*/
+
+circle{
+   fill:#85f6fa;
+   opacity:0.9;
+}
+
+circle:hover{
+   fill:#f5fa91;
+   opacity:1;
+}
+
+/*--------------------------------------*/
+/* Axes stylings */
+/*--------------------------------------*/
+
+.y-axis text, .x-axis text {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:100;
+  font-size:13px;
+  opacity:1;
+  fill:white;
+}
+
+.y-axis path, .x-axis path {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+}
+
+.y-axis line, .x-axis line {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+  stroke-dasharray:2;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:40}
+    w = 700 - m.left - m.right,
+    h = 700 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+    .attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Dataset
+// --------------------------------------
+
+var data = [
+        { x: 100, y: 110 },
+        { x: 83, y: 43 },
+        { x: 92, y: 28 },
+        { x: 49, y: 74 },
+        { x: 51, y: 10 },
+        { x: 25, y: 98 },
+        { x: 77, y: 30 },
+        { x: 20, y: 83 },
+        { x: 11, y: 63 },
+        { x:  4, y: 55 },
+        { x:  0, y:  0 },
+        { x: 85, y: 100 },
+        { x: 60, y: 40 },
+        { x: 70, y: 80 },
+        { x: 10, y: 20 },
+        { x: 40, y: 50 },
+        { x: 25, y: 31 }];
+
+// --------------------------------------
+//  Scales
+// --------------------------------------
+
+var x = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.x)])
+    .range([0, w]);;
+
+var y = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.y)])
+    .range([h, 0]);
+
+// --------------------------------------
+//  Axes
+// --------------------------------------
+
+svg.append("g")
+    .attr("class","x-axis")
+    .attr("transform",`translate(0, ${h})`)
+    .call(d3.axisBottom(x));
+
+svg.append("g")
+    .attr("class","y-axis")
+    .attr("transform",`translate(0, 0)`)
+    .call(d3.axisLeft(y));
+
+// --------------------------------------
+//  Data drawing
+// -------------------------------------- 
+
+svg.selectAll("circle")
+     .data(data)
+     .join("circle")
+     .attr("cx", d => x(d.x))
+     .attr("cy", d => y(d.y))
+     .attr("r", 30)
+     .on("mouseover", MouseOver)
+     .on("mouseout", MouseOut);
+
+// --------------------------------------
+//  Interactivity hover style
+// --------------------------------------
+
+function MouseOver(d) {
+
+  d3.select(this)
+     .attr("r", 30)
+     .style("fill", "#f5fa91");
+}
+
+function MouseOut(d) {
+
+d3.select(this)
+   .attr("r", 20)
+   .style("fill", "#FC77AD");
+}
+
+</script>
+</body>
+</html>

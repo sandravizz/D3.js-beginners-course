@@ -1,0 +1,186 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>bar chart | colour</title>
+
+<!--------------------------------------->
+<!-- Fonts reference -->
+<!--------------------------------------->
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;1,100;1,300&display=swap" rel="stylesheet">
+
+<!--------------------------------------->
+<!-- Connecting with libraries -->
+<!--------------------------------------->
+
+<script src="https://d3js.org/d3.v7.min.js" ></script>
+
+<!--------------------------------------->
+<!-- Headlines -->
+<!--------------------------------------->
+
+<p id="h1">BAR CHART | COLOUR</p>
+<div id="link">by
+<a href="https://slides.com/sandraviz">SANDRA</a></div>
+
+<style>
+
+/*--------------------------------------*/
+/* Text stylings */
+/*--------------------------------------*/
+
+#h1 {
+  font-size:30px;
+  margin:30px 0px 0px 20px;
+  color:#f5fa91;
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:300;
+}
+
+#link {
+	font-family:'Montserrat Alternates', sans-serif;
+  font-weight:200;
+  font-size:10px;
+	margin:5px 0px 0px 22px;
+  color:white;
+}
+
+a:link, a:visited, a:active {
+	text-decoration: none;
+  color:white;
+  border-bottom:1.5px dotted white;
+}
+
+/*--------------------------------------*/
+/* Page stylings */
+/*--------------------------------------*/
+
+body {
+  background-color:#011227;
+}
+
+/*--------------------------------------*/
+/* Axes stylings */
+/*--------------------------------------*/
+
+.y-axis text, .x-axis text {
+  font-family:'Montserrat Alternates', sans-serif;
+  font-weight:400;
+  font-size:11px;
+  opacity:1;
+  fill:white;
+}
+
+.y-axis path {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+}
+
+.x-axis path {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+}
+
+.y-axis line, .x-axis line {
+  fill:none;
+  stroke-width:0;
+  stroke-opacity:1;
+  stroke:white;
+  stroke-dasharray:2;
+}
+
+</style>
+</head>
+
+<body>
+<script>
+
+// --------------------------------------
+//  Margin and canvas
+// --------------------------------------
+
+var m = {top:100, right:50, bottom:50, left:40}
+    w = 900 - m.left - m.right,
+    h = 700 - m.top - m.bottom;
+
+var svg = d3.select("body")
+    .append("svg")
+    .attr("width", w + m.left + m.right)
+    .attr("height", h + m.top + m.bottom)
+    .append("g")
+		.attr("transform", `translate(${m.left}, ${m.top})`);
+
+// --------------------------------------
+//  Data loading
+// --------------------------------------
+
+const data = d3.csv("https://gist.githubusercontent.com/sandravizz/d9f965eea8c3884e20bbb83d03a07dab/raw/7216fcd609324cebf28bbc3142c0ffc6f8823807/OECD%2520Countries%2520air%2520pollution%25202017", d3.autoType)
+      .then(function(data){ 
+
+      console.log(data);
+
+// --------------------------------------
+//  Sorting
+// --------------------------------------
+
+  data.sort((b, a) => {return a.Value - b.Value;});
+
+// --------------------------------------
+//  Scales
+// --------------------------------------
+  
+  let x = d3.scaleBand()
+    	.domain(data.map(d => d.LOCATION))
+    	.rangeRound([10, w])
+    	.paddingInner(0.1);
+  
+  let y = d3.scaleLinear()
+    	.domain([0, d3.max(data, d => d.Value)])
+    	.range([h - 20, 0]);
+
+  let c = d3.scaleLog()
+    	.domain(d3.extent(data, d => d.Value))
+    	.range(['#8ff798', '#85f6fa'])
+
+// --------------------------------------
+//  Axes 
+// --------------------------------------
+
+svg.append("g")
+      .attr("class", "x-axis")
+      .attr("transform", `translate(0, ${h})`)
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .attr("y", -5)
+      .attr("x", 5)
+      .attr("transform", "rotate(90)")
+      .style("text-anchor", "start");  
+
+svg.append("g")
+    	.attr("class", "y-axis")
+    	.attr("transform", `translate(20, 20)`)
+    	.call(d3.axisLeft(y)
+               .ticks(3)
+               .tickPadding(10));
+
+// --------------------------------------
+//  Data drawing 
+// --------------------------------------
+
+  svg.selectAll('rect')
+    	.data(data)
+    	.join('rect')
+      .style('fill', d => c(d.Value))
+    	.attr('width', x.bandwidth())
+    	.attr('x', d => x(d.LOCATION))
+      .attr('y', d => y(d.Value))
+    	.attr('height', d => h - y(d.Value))
+});
+
+</script>
+</body>
+</html>
