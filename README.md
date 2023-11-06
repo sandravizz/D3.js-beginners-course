@@ -4,6 +4,4 @@ These are the code examples that correspond to this [teaching presentation](http
 
 ![Alt text](Images/Presentation.png)
 
-The image below gives a quick overview of the course chapters and their content and visualisations. 
-
 ![Alt text](Images/Overview.jpeg)
