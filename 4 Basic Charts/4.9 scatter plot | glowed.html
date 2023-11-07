@@ -107,19 +107,19 @@ const data = d3.csv("https://gist.githubusercontent.com/sandravizz/ad6c57187890d
 // --------------------------------------
 
     var r = d3.scaleSqrt()
-        .domain(d3.extent(data, d => d[pop]))
+        .domain(d3.extent(data, d => d.Value))
         .range([3, 25])
 
     var x = d3.scaleLinear()
-        .domain([0, 100])
+        .domain(d3.extent(data, d => d.Value))
         .range([0, w]);
 
     var y = d3.scaleLog()
-        .domain(d3.extent(data, d => d[change]))
+        .domain(d3.extent(data, d => d.TIME))
         .range([h, 0]);
 
     var c = d3.scaleLog()
-        .domain(d3.extent(data, d => d[pop]))
+        .domain(d3.extent(data, d => d.Value))
         .range(["#85f6fa", "#8ff798"]);
 
 // --------------------------------------
@@ -131,10 +131,10 @@ const data = d3.csv("https://gist.githubusercontent.com/sandravizz/ad6c57187890d
 	      .attr("transform", `translate(0, ${h})`)
         .call(d3.axisBottom(x)
     		         .ticks(4)
- 					       .tickSize(-h)
-                 .tickPadding(5))
+ 					     .tickSize(-h)
+                .tickPadding(5))
         .append("text")
-        .text("% USAGE 2015")
+        .text("blabla")
         .attr("x", w)
         .attr("y", 30);
 
@@ -147,37 +147,37 @@ const data = d3.csv("https://gist.githubusercontent.com/sandravizz/ad6c57187890d
 					       .tickPadding(5)
                  .tickFormat(d3.format(".1s")))
         .append("text")
-        .text("% GROWTH 2010-15")
+        .text("blabla")
         .attr("x", 100)
         .attr("y", -20);
 
-// --------------------------------------
-//  Filter for the glow
-// --------------------------------------
+// // --------------------------------------
+// //  Filter for the glow
+// // --------------------------------------
 
     svg.selectAll("filter")
-        .data(d3.group(data, d => d.region))
+        .data(d3.group(data, d => d.LOCATION))
         .join("filter")
         .attr("width", "300%")
         .attr("x", "-100%")
         .attr("height", "300%")
         .attr("y", "-100%")
-        .attr("id",d => d.key + "glow")
+        .attr("id",d => d.LOCATION + "glow")
         .append("feGaussianBlur")
         .attr("stdDeviation", 4.5);
 
-// --------------------------------------
-//  Data drawing
-// --------------------------------------
+// // --------------------------------------
+// //  Data drawing
+// // --------------------------------------
 
     svg.selectAll("g")
         .data(data)
         .join("g")
-        .attr("transform", d => `translate(${x(d[user15])}, ${y(d[change])})`)
+        .attr("transform", d => `translate(${x(d.Value)}, ${y(d.TIME)})`)
         .append("circle")
-        .attr("r", d => r(d[pop]))
-        .attr("fill", d => c(d[pop]))
-        .style("filter", d => {return"url(#" + d.region + "glow)"});
+        .attr("r", d => r(d.Value))
+        .attr("fill", d => c(d.Value))
+        .style("filter", d => {return"url(#" + d.LOCATION + "glow)"});
 
 });
 
